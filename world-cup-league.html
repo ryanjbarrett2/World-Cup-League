@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adam Johnson's World Cup League</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red:    #BF0A30;
+      --navy:   #002868;
+      --green:  #006847;
+      --gold:   #D4AC0D;
+      --bg:     #e8edf6;
+      --border: rgba(0,40,104,0.15);
+      --card:   #ffffff;
+      --muted:  #4a5a7a;
+      --text:   #002868;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #e8edf6;
+      color: #002868;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    header {
+      position: relative;
+      padding: 56px 24px 40px;
+      text-align: center;
+      background: linear-gradient(160deg, #0d1f42 0%, #001a0f 60%, #1a0008 100%);
+      border-bottom: 2px solid var(--green);
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,104,71,0.25) 0%, transparent 70%),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 48px,
+          rgba(255,255,255,0.02) 48px,
+          rgba(255,255,255,0.02) 49px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 48px,
+          rgba(255,255,255,0.02) 48px,
+          rgba(255,255,255,0.02) 49px
+        );
+      pointer-events: none;
+    }
+    .trophy-ring {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #a07d00);
+      font-size: 36px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 32px rgba(212,172,13,0.4);
+    }
+    header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      background: linear-gradient(90deg, #fff 0%, #D4AC0D 50%, #fff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-meta {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: #4a5a7a;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'Space Mono', monospace;
+    }
+    .host-flags {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .flag-pill {
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .flag-usa  { background: rgba(191,10,48,0.25); border: 1px solid var(--red); }
+    .flag-mex  { background: rgba(0,104,71,0.25); border: 1px solid var(--green); }
+    .flag-can  { background: rgba(191,10,48,0.2); border: 1px solid #ff4444; }
+
+    /* ── LAYOUT ── */
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 80px; }
+
+    section { margin-bottom: 52px; }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+      color: #002868;
+    }
+
+    /* ── POT SUMMARY ── */
+    .pot-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .pot-stat {
+      flex: 1; min-width: 130px;
+      background: #ffffff;
+      border: 1px solid rgba(0,40,104,0.15);
+      border-radius: 10px;
+      padding: 16px 20px;
+      text-align: center;
+    }
+    .pot-stat .val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .pot-stat .lbl {
+      font-size: 0.7rem;
+      color: #4a5a7a;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── PAYOUT LEGEND ── */
+    .payout-legend {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .payout-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: #ffffff;
+      border: 1px solid rgba(0,40,104,0.15);
+      font-size: 0.75rem;
+      font-family: 'Space Mono', monospace;
+      color: #002868;
+    }
+    .payout-pill .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .dot-r16     { background: #4A9EFF; }
+    .dot-qf      { background: #7B5CFA; }
+    .dot-sf      { background: #F59E0B; }
+    .dot-final   { background: #EF4444; }
+    .dot-winner  { background: var(--gold); }
+
+    /* ── LEADERBOARD ── */
+    .leaderboard { display: flex; flex-direction: column; gap: 10px; }
+
+    .lb-row {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid rgba(0,40,104,0.15);
+      transition: border-color 0.2s;
+      color: #002868;
+    }
+    .lb-row:hover { border-color: rgba(0,40,104,0.35); }
+    .lb-row.top1 { background: linear-gradient(90deg, rgba(212,172,13,0.18), rgba(212,172,13,0.06)); border-color: rgba(212,172,13,0.5); }
+    .lb-row.top2 { background: linear-gradient(90deg, rgba(160,160,160,0.15), rgba(160,160,160,0.04)); border-color: rgba(130,130,130,0.35); }
+    .lb-row.top3 { background: linear-gradient(90deg, rgba(176,116,76,0.14), rgba(176,116,76,0.04)); border-color: rgba(176,116,76,0.3); }
+
+    .lb-rank {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      color: #8a9ab8;
+      text-align: center;
+    }
+    .lb-row.top1 .lb-rank { color: var(--gold); }
+    .lb-row.top2 .lb-rank { color: #c0c0c0; }
+    .lb-row.top3 .lb-rank { color: #b0744c; }
+
+    .lb-name { font-weight: 700; font-size: 1.05rem; }
+    .lb-teams {
+      font-size: 0.72rem;
+      color: #4a5a7a;
+      margin-top: 2px;
+    }
+    .lb-money {
+      text-align: right;
+    }
+    .lb-earned {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+    }
+    .lb-winloss {
+      font-size: 0.72rem;
+      color: #4a5a7a;
+      font-family: 'Space Mono', monospace;
+      margin-top: 1px;
+    }
+
+    /* loading / error states */
+    .loading-msg {
+      text-align: center;
+      color: #4a5a7a;
+      padding: 40px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(0,40,104,0.15);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── TEAM PERFORMANCE ── */
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .player-card {
+      background: #ffffff;
+      border: 1px solid rgba(0,40,104,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      color: #002868;
+    }
+    .player-card-header {
+      padding: 12px 16px;
+      background: #002868;
+      border-bottom: 1px solid rgba(0,40,104,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .player-card-name {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+      color: #ffffff;
+    }
+    .player-card-earnings {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+    }
+    .player-card-body { padding: 10px 14px 14px; }
+
+    .team-row {
+      margin-bottom: 12px;
+      border: 1px solid rgba(0,40,104,0.15);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .team-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      background: #f0f4fb;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #002868;
+    }
+    .team-name { flex: 1; }
+    .team-group {
+      font-size: 0.68rem;
+      color: #4a5a7a;
+      font-family: 'Space Mono', monospace;
+      margin-left: 8px;
+    }
+    .team-status {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+    }
+    .status-active   { background: rgba(0,104,71,0.12); color: #005c38; border: 1px solid rgba(0,104,71,0.3); }
+    .status-pending  { background: rgba(0,40,104,0.07); color: #5a6a8a; border: 1px solid rgba(0,40,104,0.2); }
+    .status-out      { background: rgba(191,10,48,0.1); color: #8b0000; border: 1px solid rgba(191,10,48,0.3); }
+
+    .team-stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      text-align: center;
+      padding: 6px 0;
+      border-top: 1px solid rgba(0,40,104,0.1);
+      font-size: 0.7rem;
+      color: #002868;
+    }
+    .team-stats .sh { color: #4a5a7a; font-size: 0.62rem; margin-bottom: 2px; }
+    .team-stats .sv { font-family: 'Space Mono', monospace; font-weight: 700; }
+
+    .top-scorer-row {
+      padding: 5px 12px 7px;
+      border-top: 1px solid rgba(0,40,104,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: #4a5a7a;
+    }
+    .top-scorer-row .scorer-label {
+      color: var(--gold);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+    .top-scorer-row .scorer-name {
+      color: #002868;
+      font-weight: 600;
+    }
+    .scorer-goals {
+      margin-left: auto;
+      font-family: 'Space Mono', monospace;
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* loading row inside team */
+    .team-loading {
+      padding: 8px 12px;
+      font-size: 0.72rem;
+      color: #4a5a7a;
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      border-top: 1px solid rgba(0,40,104,0.15);
+      color: #4a5a7a;
+      font-size: 0.72rem;
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── REFRESH BTN ── */
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: transparent;
+      border: 1px solid var(--green);
+      color: var(--green);
+      border-radius: 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-left: auto;
+      margin-bottom: 16px;
+    }
+    .refresh-btn:hover { background: rgba(0,104,71,0.1); }
+    .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── TOURNAMENT STATUS BANNER ── */
+    .status-banner {
+      background: linear-gradient(90deg, rgba(0,104,71,0.08), rgba(0,40,104,0.08));
+      border: 1px solid rgba(0,104,71,0.3);
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #002868;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4fca8a;
+      animation: pulse 2s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    @media (max-width: 520px) {
+      .pot-bar { gap: 8px; }
+      .pot-stat { padding: 12px; }
+      .lb-row { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="trophy-ring">🏆</div>
+  <h1>Adam Johnson's World Cup League</h1>
+  <p class="header-meta">USA · Mexico · Canada &nbsp;·&nbsp; 2026 FIFA World Cup</p>
+  <div class="host-flags">
+    <span class="flag-pill flag-usa">🇺🇸 USA</span>
+    <span class="flag-pill flag-mex">🇲🇽 Mexico</span>
+    <span class="flag-pill flag-can">🇨🇦 Canada</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- TOURNAMENT STATUS -->
+  <div class="status-banner">
+    <div class="status-dot"></div>
+    <span id="tournament-status-text">Loading tournament status…</span>
+  </div>
+
+  <!-- POT SUMMARY -->
+  <section>
+    <div class="section-label">The Stakes</div>
+    <div class="section-title">The Pot</div>
+    <div class="pot-bar">
+      <div class="pot-stat"><div class="val">$320</div><div class="lbl">Total Pot</div></div>
+      <div class="pot-stat"><div class="val">8</div><div class="lbl">Players</div></div>
+      <div class="pot-stat"><div class="val">$40</div><div class="lbl">Buy-In Each</div></div>
+      <div class="pot-stat"><div class="val">48</div><div class="lbl">Teams Drafted</div></div>
+    </div>
+    <div class="payout-legend">
+      <div class="payout-pill"><span class="dot dot-r16"></span> R16: $5</div>
+      <div class="payout-pill"><span class="dot dot-qf"></span> Quarters: $10</div>
+      <div class="payout-pill"><span class="dot dot-sf"></span> Semis: $25</div>
+      <div class="payout-pill"><span class="dot dot-final"></span> Final: $20</div>
+      <div class="payout-pill"><span class="dot dot-winner"></span> Winner: $25</div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section>
+    <div class="section-label">Standings</div>
+    <div class="section-title">Leaderboard</div>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">
+      <span>⟳</span> Refresh Data
+    </button>
+    <div id="leaderboard-container">
+      <div class="loading-msg"><span class="loading-spinner"></span>Fetching live standings…</div>
+    </div>
+  </section>
+
+  <!-- TEAM PERFORMANCE -->
+  <section>
+    <div class="section-label">Group Stage</div>
+    <div class="section-title">Team Performance</div>
+    <div class="player-grid" id="team-performance-container">
+      <div class="loading-msg" style="grid-column:1/-1"><span class="loading-spinner"></span>Loading team stats…</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Data sourced live from FIFA 2026 · Built for the boys · Last updated: <span id="last-updated">—</span>
+</footer>
+
+<script>
+// ─── DRAFT DATA ─────────────────────────────────────────────────────────────
+const PLAYERS = [
+  {
+    name: "Barrett",
+    teams: [
+      { name: "Spain",        group: "H" },
+      { name: "Uruguay",      group: "H" },
+      { name: "Sweden",       group: "F" },
+      { name: "Canada",       group: "B" },
+      { name: "Tunisia",      group: "F" },
+      { name: "South Africa", group: "A" },
+    ]
+  },
+  {
+    name: "Gavin",
+    teams: [
+      { name: "France",       group: "I" },
+      { name: "Norway",       group: "I" }, // "Haaland (Norway)" — classic
+      { name: "Turkey",       group: "D" },
+      { name: "South Korea",  group: "A" },
+      { name: "DR Congo",     group: "K" },
+      { name: "New Zealand",  group: "G" },
+    ]
+  },
+  {
+    name: "Charlie",
+    teams: [
+      { name: "Argentina",    group: "J" },
+      { name: "Japan",        group: "F" },
+      { name: "Austria",      group: "J" },
+      { name: "Czech Republic", group: "A" },
+      { name: "Qatar",        group: "B" },
+      { name: "Jordan",       group: "J" },
+    ]
+  },
+  {
+    name: "Ted",
+    teams: [
+      { name: "Portugal",     group: "K" },
+      { name: "Morocco",      group: "C" },
+      { name: "Mexico",       group: "A" },
+      { name: "Iran",         group: "G" },
+      { name: "Panama",       group: "L" },
+      { name: "Uzbekistan",   group: "K" },
+    ]
+  },
+  {
+    name: "Carra",
+    teams: [
+      { name: "Germany",      group: "E" },
+      { name: "United States", group: "D" },
+      { name: "Egypt",        group: "G" },
+      { name: "Australia",    group: "D" },
+      { name: "Saudi Arabia", group: "H" },
+      { name: "Haiti",        group: "C" },
+    ]
+  },
+  {
+    name: "Ian",
+    teams: [
+      { name: "England",      group: "L" },
+      { name: "Croatia",      group: "L" },
+      { name: "Senegal",      group: "I" },
+      { name: "Scotland",     group: "C" },
+      { name: "Ivory Coast",  group: "E" },
+      { name: "Curacao",      group: "E" },
+    ]
+  },
+  {
+    name: "Gage",
+    teams: [
+      { name: "Brazil",       group: "C" },
+      { name: "Colombia",     group: "K" },
+      { name: "Ecuador",      group: "E" },
+      { name: "Ghana",        group: "L" },
+      { name: "Paraguay",     group: "D" },
+      { name: "Cape Verde",   group: "H" },
+    ]
+  },
+  {
+    name: "Dawson",
+    teams: [
+      { name: "Netherlands",  group: "F" },
+      { name: "Belgium",      group: "G" },
+      { name: "Switzerland",  group: "B" },
+      { name: "Algeria",      group: "J" },
+      { name: "Bosnia and Herzegovina", group: "B" },
+      { name: "Iraq",         group: "I" },
+    ]
+  },
+];
+
+// Payout structure (based on where they END UP)
+const PAYOUTS = { r16: 5, qf: 10, sf: 25, final: 20, winner: 25 };
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let teamData = {}; // team name → { mp, w, d, l, gf, ga, topScorer, scorerGoals, stage }
+
+// ─── MAIN LOAD ───────────────────────────────────────────────────────────────
+async function loadAll() {
+  const btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Fetching…';
+
+  document.getElementById('leaderboard-container').innerHTML =
+    '<div class="loading-msg"><span class="loading-spinner"></span>Fetching live standings…</div>';
+  document.getElementById('team-performance-container').innerHTML =
+    '<div class="loading-msg" style="grid-column:1/-1"><span class="loading-spinner"></span>Loading team stats…</div>';
+
+  try {
+    await fetchLiveData();
+  } catch(e) {
+    console.error(e);
+  }
+
+  renderLeaderboard();
+  renderTeamPerformance();
+
+  document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+  btn.disabled = false;
+  btn.innerHTML = '<span>⟳</span> Refresh Data';
+}
+
+// ─── API HELPER ────────────────────────────────────────────────────────────
+async function callClaude(messages) {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 2000,
+      tools: [{ type: "web_search_20250305", name: "web_search" }],
+      messages
+    })
+  });
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`API ${response.status}: ${err}`);
+  }
+  return response.json();
+}
+
+// ─── FETCH LIVE DATA VIA CLAUDE ───────────────────────────────────────────
+async function fetchLiveData() {
+  const allTeamNames = [...new Set(PLAYERS.flatMap(p => p.teams.map(t => t.name)))];
+
+  const prompt = `You are a sports data assistant. The 2026 FIFA World Cup is currently in progress (started June 11, 2026).
+
+Search for the latest 2026 FIFA World Cup group stage standings and top scorers, then return data for these teams: ${allTeamNames.join(', ')}
+
+Respond ONLY with a raw JSON object — no markdown fences, no explanation, no text before or after. Use exactly this structure:
+{"tournamentStatus":"Group stage in progress — Matchday X","teams":{"Spain":{"mp":0,"w":0,"d":0,"l":0,"gf":0,"ga":0,"topScorer":"","scorerGoals":0,"stage":"group"}}}
+
+For stage: "group" = still competing in group stage, "r16" = out in R16/R32, "qf" = out in QF, "sf" = out in SF, "final" = lost the final, "winner" = champion.
+topScorer = leading scorer for that team in this tournament (empty string "" if scorerGoals is 0).
+All 48 draft teams must appear in the response.`;
+
+  try {
+    const messages = [{ role: "user", content: prompt }];
+    let data = await callClaude(messages);
+    let iterations = 0;
+
+    // Agentic loop: keep going while model is using tools
+    while (data.stop_reason === "tool_use" && iterations < 5) {
+      iterations++;
+      const assistantMsg = { role: "assistant", content: data.content };
+
+      // web_search tool returns results directly in content blocks of type "tool_result"
+      // We need to pass back each tool_use block's result as a tool_result message
+      const toolResultContents = data.content
+        .filter(b => b.type === "tool_use")
+        .map(b => {
+          // The search results come back inside the content array from the API
+          // We just need to acknowledge each tool call with its id
+          return {
+            type: "tool_result",
+            tool_use_id: b.id,
+            content: typeof b.content === "string" ? b.content :
+                     Array.isArray(b.content) ? b.content.map(c => c.text || "").join("\n") :
+                     JSON.stringify(b.content || "")
+          };
+        });
+
+      messages.push(assistantMsg);
+      messages.push({ role: "user", content: toolResultContents });
+      data = await callClaude(messages);
+    }
+
+    // Collect all text blocks from the final response
+    const textBlocks = (data.content || []).filter(b => b.type === "text");
+    if (!textBlocks.length) throw new Error(`No text block after ${iterations} tool calls. stop_reason=${data.stop_reason}`);
+
+    // Find the block that contains valid JSON (may have preamble text)
+    let parsed = null;
+    for (const block of textBlocks) {
+      const raw = block.text.trim();
+      // Try stripping markdown fences first
+      const stripped = raw.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
+      // Find first { to last } to extract JSON even if there's surrounding text
+      const start = stripped.indexOf('{');
+      const end = stripped.lastIndexOf('}');
+      if (start !== -1 && end !== -1) {
+        try {
+          parsed = JSON.parse(stripped.slice(start, end + 1));
+          break;
+        } catch(_) {}
+      }
+    }
+
+    if (!parsed) throw new Error("Could not parse JSON from response");
+
+    // Update tournament status banner
+    if (parsed.tournamentStatus) {
+      document.getElementById('tournament-status-text').textContent = '⚽ ' + parsed.tournamentStatus;
+    }
+
+    // Merge live data into teamData
+    if (parsed.teams) {
+      for (const [name, stats] of Object.entries(parsed.teams)) {
+        teamData[name] = stats;
+      }
+    }
+
+  } catch(e) {
+    console.warn("Live fetch failed, using defaults:", e.message);
+    document.getElementById('tournament-status-text').textContent =
+      '⚽ Group stage in progress — June 11 to June 27, 2026. Knockout rounds begin June 28.';
+    // Use defaults (all zeros, pre-tournament scouts)
+    const defaults = {
+      "Spain": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Pedri", scorerGoals:0, stage:"group" },
+      "Uruguay": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Darwin Núñez", scorerGoals:0, stage:"group" },
+      "Sweden": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Viktor Gyökeres", scorerGoals:0, stage:"group" },
+      "Canada": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Alphonso Davies", scorerGoals:0, stage:"group" },
+      "Tunisia": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Wahbi Khazri", scorerGoals:0, stage:"group" },
+      "South Africa": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Percy Tau", scorerGoals:0, stage:"group" },
+      "France": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Kylian Mbappé", scorerGoals:0, stage:"group" },
+      "Norway": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Erling Haaland", scorerGoals:0, stage:"group" },
+      "Turkey": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Kerem Aktürkoğlu", scorerGoals:0, stage:"group" },
+      "South Korea": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Son Heung-min", scorerGoals:0, stage:"group" },
+      "DR Congo": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Cédric Bakambu", scorerGoals:0, stage:"group" },
+      "New Zealand": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Chris Wood", scorerGoals:0, stage:"group" },
+      "Argentina": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Lionel Messi", scorerGoals:0, stage:"group" },
+      "Japan": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Daichi Kamada", scorerGoals:0, stage:"group" },
+      "Austria": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Marcel Sabitzer", scorerGoals:0, stage:"group" },
+      "Czech Republic": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Patrik Schick", scorerGoals:0, stage:"group" },
+      "Qatar": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Akram Afif", scorerGoals:0, stage:"group" },
+      "Jordan": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Musa Al-Taamari", scorerGoals:0, stage:"group" },
+      "Portugal": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Cristiano Ronaldo", scorerGoals:0, stage:"group" },
+      "Morocco": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Hakim Ziyech", scorerGoals:0, stage:"group" },
+      "Mexico": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Raúl Jiménez", scorerGoals:0, stage:"group" },
+      "Iran": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Sardar Azmoun", scorerGoals:0, stage:"group" },
+      "Panama": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Ismael Díaz", scorerGoals:0, stage:"group" },
+      "Uzbekistan": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Eldor Shomurodov", scorerGoals:0, stage:"group" },
+      "Germany": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Florian Wirtz", scorerGoals:0, stage:"group" },
+      "United States": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Christian Pulisic", scorerGoals:0, stage:"group" },
+      "Egypt": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Mohamed Salah", scorerGoals:0, stage:"group" },
+      "Australia": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Mitch Duke", scorerGoals:0, stage:"group" },
+      "Saudi Arabia": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Saleh Al-Shehri", scorerGoals:0, stage:"group" },
+      "Haiti": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Nazon", scorerGoals:0, stage:"group" },
+      "England": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Harry Kane", scorerGoals:0, stage:"group" },
+      "Croatia": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Luka Modrić", scorerGoals:0, stage:"group" },
+      "Senegal": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Sadio Mané", scorerGoals:0, stage:"group" },
+      "Scotland": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Che Adams", scorerGoals:0, stage:"group" },
+      "Ivory Coast": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Sébastien Haller", scorerGoals:0, stage:"group" },
+      "Curacao": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Leandro Bacuna", scorerGoals:0, stage:"group" },
+      "Brazil": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Vinicius Jr.", scorerGoals:0, stage:"group" },
+      "Colombia": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Luis Díaz", scorerGoals:0, stage:"group" },
+      "Ecuador": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Enner Valencia", scorerGoals:0, stage:"group" },
+      "Ghana": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Jordan Ayew", scorerGoals:0, stage:"group" },
+      "Paraguay": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Miguel Almirón", scorerGoals:0, stage:"group" },
+      "Cape Verde": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Ryan Mendes", scorerGoals:0, stage:"group" },
+      "Netherlands": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Memphis Depay", scorerGoals:0, stage:"group" },
+      "Belgium": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Romelu Lukaku", scorerGoals:0, stage:"group" },
+      "Switzerland": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Xherdan Shaqiri", scorerGoals:0, stage:"group" },
+      "Algeria": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Riyad Mahrez", scorerGoals:0, stage:"group" },
+      "Bosnia and Herzegovina": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Edin Džeko", scorerGoals:0, stage:"group" },
+      "Iraq": { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:"Aymen Hussein", scorerGoals:0, stage:"group" },
+    };
+    for (const [k, v] of Object.entries(defaults)) {
+      if (!teamData[k]) teamData[k] = v;
+    }
+  }
+}
+
+// ─── PAYOUT CALC ─────────────────────────────────────────────────────────────
+function getEarnings(stage) {
+  switch(stage) {
+    case "r16":    return PAYOUTS.r16;
+    case "qf":     return PAYOUTS.qf;
+    case "sf":     return PAYOUTS.sf;
+    case "final":  return PAYOUTS.final;
+    case "winner": return PAYOUTS.winner;
+    default:       return 0;
+  }
+}
+
+function stageName(stage) {
+  switch(stage) {
+    case "group":  return null;
+    case "r16":    return "R16";
+    case "qf":     return "QF";
+    case "sf":     return "SF";
+    case "final":  return "Final";
+    case "winner": return "🏆 Champion";
+    default:       return null;
+  }
+}
+
+// ─── LEADERBOARD RENDER ───────────────────────────────────────────────────
+function renderLeaderboard() {
+  const container = document.getElementById('leaderboard-container');
+
+  const scores = PLAYERS.map(p => {
+    let earned = 0;
+    p.teams.forEach(t => {
+      const td = teamData[t.name];
+      if (td) earned += getEarnings(td.stage);
+    });
+    return { ...p, earned };
+  });
+
+  scores.sort((a, b) => b.earned - a.earned || a.name.localeCompare(b.name));
+
+  let html = '<div class="leaderboard">';
+  scores.forEach((p, i) => {
+    const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    const teamNames = p.teams.map(t => t.name).join(' · ');
+    const netPL = p.earned - 40;
+    const plStr = netPL >= 0 ? `+$${netPL}` : `-$${Math.abs(netPL)}`;
+    const plColor = netPL > 0 ? '#4fca8a' : netPL < 0 ? '#ff8080' : '#aaa';
+    html += `
+      <div class="lb-row ${rankClass}">
+        <div class="lb-rank">${i + 1}</div>
+        <div>
+          <div class="lb-name">${p.name}</div>
+          <div class="lb-teams">${teamNames}</div>
+        </div>
+        <div class="lb-money">
+          <div class="lb-earned">$${p.earned}</div>
+          <div class="lb-winloss" style="color:${plColor}">${plStr} net</div>
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ─── TEAM PERFORMANCE RENDER ─────────────────────────────────────────────
+function renderTeamPerformance() {
+  const container = document.getElementById('team-performance-container');
+
+  // Sort players by earnings descending
+  const sorted = [...PLAYERS].sort((a,b) => {
+    const ea = a.teams.reduce((s,t) => s + getEarnings((teamData[t.name]||{}).stage||'group'), 0);
+    const eb = b.teams.reduce((s,t) => s + getEarnings((teamData[t.name]||{}).stage||'group'), 0);
+    return eb - ea || a.name.localeCompare(b.name);
+  });
+
+  let html = '';
+  sorted.forEach(p => {
+    let totalEarned = 0;
+    let teamsHtml = '';
+
+    p.teams.forEach(t => {
+      const td = teamData[t.name] || { mp:0, w:0, d:0, l:0, gf:0, ga:0, topScorer:'TBD', scorerGoals:0, stage:'group' };
+      const earned = getEarnings(td.stage);
+      totalEarned += earned;
+      const stName = stageName(td.stage);
+
+      let statusClass = 'status-active';
+      let statusLabel = td.mp === 0 ? 'Not Played' : 'Active';
+      if (td.stage === 'winner') { statusClass = 'status-active'; statusLabel = '🏆 Winner'; }
+      else if (['r16','qf','sf','final'].includes(td.stage)) { statusClass = 'status-out'; statusLabel = `Out (${stageName(td.stage)})`; }
+      else if (td.mp === 0) { statusClass = 'status-pending'; }
+
+      const goalsDisplay = td.scorerGoals > 0
+        ? `${td.topScorer} — ${td.scorerGoals} ⚽`
+        : `n/a`;
+
+      teamsHtml += `
+        <div class="team-row">
+          <div class="team-row-header">
+            <span class="team-name">${t.name}</span>
+            <span class="team-group">Grp ${t.group}</span>
+            <span class="team-status ${statusClass}">${statusLabel}</span>
+          </div>
+          <div class="team-stats">
+            <div><div class="sh">MP</div><div class="sv">${td.mp}</div></div>
+            <div><div class="sh">W</div><div class="sv">${td.w}</div></div>
+            <div><div class="sh">D</div><div class="sv">${td.d}</div></div>
+            <div><div class="sh">L</div><div class="sv">${td.l}</div></div>
+            <div><div class="sh">GF/GA</div><div class="sv">${td.gf}:${td.ga}</div></div>
+          </div>
+          <div class="top-scorer-row">
+            <span class="scorer-label">Top Scorer</span>
+            <span class="scorer-name">${td.scorerGoals > 0 ? td.topScorer : 'n/a'}</span>
+            <span class="scorer-goals">${td.scorerGoals > 0 ? td.scorerGoals + ' ⚽' : ''}</span>
+          </div>
+        </div>`;
+    });
+
+    html += `
+      <div class="player-card">
+        <div class="player-card-header">
+          <div class="player-card-name">${p.name}</div>
+          <div class="player-card-earnings">$${totalEarned} earned</div>
+        </div>
+        <div class="player-card-body">
+          ${teamsHtml}
+        </div>
+      </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────
+loadAll();
+</script>
+</body>
+</html>
